@@ -30,3 +30,6 @@ for subvol in "${SUBVOLS[@]}"; do
 
     log "Completed snapshot and cleanup for $subvol."
 done
+
+#Changelog
+#2025-11-17 - AS - v1, First release.
