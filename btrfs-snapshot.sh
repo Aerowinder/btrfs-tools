@@ -14,7 +14,7 @@ for subvol in "${BTRFS_SUBVOLUMES[@]}"; do
     fi
 
     snapshot_root="$subvol/$DIR_SNAPSHOT"
-    snapshot_name=${$subvol_name}-$(date +%Y%m%d-%H%M%S)
+    snapshot_name=${subvol_name}-$(date +%Y%m%d-%H%M%S)
 
     # Check if subvolume exists
     if [[ ! -d "$subvol" ]]; then
