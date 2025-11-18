@@ -8,8 +8,13 @@ DIR_SNAPSHOT=".snapshots"
 MAX_SNAPSHOT=8 # Per subvolume
 
 for subvol in "${BTRFS_SUBVOLUMES[@]}"; do
+    subvol_name="${subvol//\//}"
+    if [[ -z "$subvol_name" ]]; then
+        subvol_name="root"
+    fi
+
     snapshot_root="$subvol/$DIR_SNAPSHOT"
-    snapshot_name=$(date +%Y-%m-%d_%H.%M.%S)
+    snapshot_name=${$subvol_name}-$(date +%Y%m%d-%H%M%S)
 
     # Check if subvolume exists
     if [[ ! -d "$subvol" ]]; then
@@ -52,3 +57,6 @@ for subvol in "${BTRFS_SUBVOLUMES[@]}"; do
 
     echo ""
 done
+
+#Changelog
+#2025-11-18 - AS - v1, First release.
