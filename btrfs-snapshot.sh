@@ -7,16 +7,18 @@ TOP_LEVEL=false
 
 usage() {
     echo
-    echo "USAGE:   $0 -t"
+    echo "USAGE:   $0"
     echo
-    echo "-t:      Operate in TOP-LEVEL mode. This will store snapshots on the specified subvolume at the DRIVE ROOT."
-    #echo "-s:      Operate in SUB-LEVEL mode. This will store snapshots on the specified subvolume that is nested within the backup target."
+    echo VALID ARGS
+    echo "-t:      Operate in TOP-LEVEL mode. This will store snapshots on the specified subvolume at the DRIVE ROOT (ie. /snapshots)."
+    echo
+    echo "NO ARGS: Operate in NESTED-SUBVOLUME mode. This will store snapshots in a nested subvolume relative to the snapshot target (ie. /home/.snapshots)."
     echo
     exit 1
 }
 
 # Parse options
-while getopts "t:h" opt; do
+while getopts "th" opt; do
     case $opt in
         t) TOP_LEVEL=true ;;
         h) usage ;;
@@ -56,6 +58,7 @@ for subvol in "${BTRFS_SUBVOLUMES[@]}"; do
     if [[ ! -d "$subvol" ]]; then
         echo "[$subvol_name] Error 1: Snapshot source not found."
         logger -t "btrfs-snapshot" -p user.notice "[$subvol_name] Error 1: Snapshot source not found."
+        echo
         continue
     fi
 
@@ -64,11 +67,13 @@ for subvol in "${BTRFS_SUBVOLUMES[@]}"; do
         if [[ -e "$snapshot_root" ]]; then
             echo "[$subvol_name] Error 2: Snapshot not taken. $snapshot_root is not a Btrfs subvolume."
             logger -t "btrfs-snapshot" -p user.notice "Error 2: Snapshot not taken. $snapshot_root is not a Btrfs subvolume."
+            echo
             continue
         fi
         if [[ $TOP_LEVEL == true ]]; then
             echo "[$subvol_name] Error 3: Snapshot not taken. $snapshot_root does not exist."
             logger -t "btrfs-snapshot" -p user.notice "[$subvol_name] Error 3: Snapshot not taken. $snapshot_root does not exist."
+            echo
             continue
         else
             echo "[$subvol_name] Creating $NS_MOUNTPOINT subvolume on $subvol_name."
@@ -96,7 +101,7 @@ for subvol in "${BTRFS_SUBVOLUMES[@]}"; do
         done
     fi
 
-    echo ""
+    echo
 done
 
 #Changelog
