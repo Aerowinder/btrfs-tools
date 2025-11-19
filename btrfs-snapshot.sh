@@ -97,7 +97,7 @@ for subvol in "${BTRFS_SUBVOLUMES[@]}"; do
         for ((i=0; i<delete_count; i++)); do
             echo "[$subvol_name] Deleting old snapshot: ${snapshots[i]}"
             logger -t btrfs-snapshot -p user.notice "[$subvol_name] Deleting old snapshot: ${snapshots[i]}"
-            btrfs subvolume delete "$snapshot_root/${snapshots[i]}"
+            btrfs subvolume delete "${snapshots[i]}"
         done
     fi
 
