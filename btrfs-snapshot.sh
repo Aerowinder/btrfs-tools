@@ -88,8 +88,6 @@ for subvol in "${BTRFS_SUBVOLUMES[@]}"; do
     btrfs subvolume snapshot -r "$subvol" "$snapshot_root/$snapshot_name"
 
     # Cleanup old snapshots
-    # cd "$snapshot_root"
-    # snapshots=($(ls -1d "${subvol_name}-"*/ 2>/dev/null | sort))
     mapfile -t snapshots < <(find "$snapshot_root" -maxdepth 1 -type d -name "${subvol_name}-*" | sort)
     count=${#snapshots[@]}
     if (( count > MAX_SNAPSHOT )); then
