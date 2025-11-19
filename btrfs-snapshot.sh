@@ -61,16 +61,16 @@ for subvol in "${BTRFS_SUBVOLUMES[@]}"; do
 
     # Check if snapshot storage subvolume is accessible to the system.
     if ! btrfs subvolume show "$snapshot_root" &>/dev/null; then
+        if [[ -e "$snapshot_root" ]]; then
+            echo "[$subvol_name] Error 2: Snapshot not taken. $snapshot_root is not a Btrfs subvolume."
+            logger -t "btrfs-snapshot" -p user.notice "Error 2: Snapshot not taken. $snapshot_root is not a Btrfs subvolume."
+            continue
+        fi
         if [[ $TOP_LEVEL == true ]]; then
-            echo "[$subvol_name] Error 2: Snapshot not taken. Either $snapshot_root does not exist or it is not a Btrfs subvolume."
-            logger -t "btrfs-snapshot" -p user.notice "[$subvol_name] Error 2: Snapshot not taken. Either $snapshot_root does not exist or it is not a Btrfs subvolume."
+            echo "[$subvol_name] Error 3: Snapshot not taken. $snapshot_root does not exist."
+            logger -t "btrfs-snapshot" -p user.notice "[$subvol_name] Error 3: Snapshot not taken. $snapshot_root does not exist."
             continue
         else
-            if [[ -e "$snapshot_root" ]]; then
-                echo "[$subvol_name] Error 3: Snapshot not taken. $snapshot_root exists but is not a Btrfs subvolume."
-                logger -t "btrfs-snapshot" -p user.notice "Error 3: Snapshot not taken. $snapshot_root exists but is not a Btrfs subvolume."
-                continue
-            fi
             echo "[$subvol_name] Creating $NS_MOUNTPOINT subvolume on $subvol_name."
             logger -t "btrfs-snapshot" -p user.notice "[$subvol_name] Creating $NS_MOUNTPOINT subvolume on $subvol_name."
             btrfs subvolume create "$snapshot_root"
